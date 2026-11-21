@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Prevents search engines like Google from indexing this page -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Roadrunner Robotics</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      color: #222;
+    }
+    h1, h2 {
+      color: #111;
+    }
+    pre {
+      position: relative;
+      background: #f4f4f4;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-x: auto;
+      tab-size: 4;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 14px;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .copy-btn:hover {
+      background: #e9e9e9;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Welcome</h1>
+  <p>Code and lessons for our 2026/2027 WRPS robotics club will be available here. You can copy and paste into the robot coding environment:</p>
+  <a href='https://make.firialabs.com/'>https://make.firialabs.com/</a>
+  
+
+<pre>
+def move_forward(speed, duration):
+	if speed > 0:
+		print("Moving forward at speed:", speed)
+		# Add motor pin commands here
+
+move_forward(50, 2)
+</pre>
+
+
+
+<!-- Script for copy code button is below -->  
+  <script>
+    document.querySelectorAll('pre').forEach((pre) => {
+      const button = document.createElement('button');
+      button.className = 'copy-btn';
+      button.textContent = 'Copy';
+
+      button.addEventListener('click', () => {
+        const clone = pre.cloneNode(true);
+        clone.querySelector('.copy-btn').remove();
+        
+        // Preserves exact tabs and indentation while trimming empty outer lines
+        const code = clone.textContent.replace(/^\n+|\n+$/g, '');
+        
+        navigator.clipboard.writeText(code).then(() => {
+          button.textContent = 'Copied!';
+          setTimeout(() => (button.textContent = 'Copy'), 2000);
+        });
+      });
+
+      pre.appendChild(button);
+    });
+  </script>
+
+</body>
+</html>
