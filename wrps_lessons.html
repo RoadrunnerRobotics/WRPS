@@ -1,1 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Prevents search engines like Google from indexing this page -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Roadrunner Robotics: Code Lessons</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      color: #222;
+    }
+    h1, h2 {
+      color: #111;
+    }
+    pre {
+      position: relative;
+      background: #f4f4f4;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-x: auto;
+      tab-size: 4;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 14px;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .copy-btn:hover {
+      background: #e9e9e9;
+    }
+  </style>
+</head>
+<body>
 
+  <h1 style="color: purple;">Roadrunner Robotics: Code Lessons</h1>
+	<h2> Next club meeting is: Thursday Nov 26 at second break.</h2>
+  <h3>
+	Do all your programming at this website:<br>
+	<a href='https://make.firialabs.com/'>https://make.firialabs.com/</a>
+	<br>Don't forget to choose sandbox mode!
+  </h3>
+  
+<!---------------------------------------------------------------------->
+<table>
+<td><h2>All programs need these lines at the very beginning:</h2><tr>
+<td><pre>
+from botcore import *
+from time import sleep
+</pre><tr>
+
+
+<!---------------------------------------------------------------------->
+<td><h3>1. Learn Looping, condition testing, and proximity testing: Oct 22, 2026</h3><tr>
+<td><h4>Below is a simple program that uses a while loop to appear alive, the proximity sensors to see walls, and the if structure to test whether a wall is close and take action.</h4><tr>
+<td><h4>The two front facing "proximity sensors" are like headlights. </h4><tr>
+
+<td><pre>
+from botcore import *
+from time import sleep
+
+motors.enable(True)
+
+keepGoing=True
+while keepGoing:
+
+    #detect barrier
+    p=prox.detect(1,5) #power 1to8, sens 0 to 100
+    leds.prox(p) #turn on headlamps to show detection
+    if any(p): #proximity detection
+        motors.run(LEFT, 0)
+        motors.run(RIGHT, 0)
+    else:
+        motors.run(LEFT, 40)
+        motors.run(RIGHT, 40)
+
+motors.enable(False)    #disable motors
+</pre><tr>
+
+</table>
+
+<p><a href="index.html">&larr; Back to Roadrunner Robotics Home</a></p>
+	
+<!-- Script for copy code button is below -->  
+  <script>
+    document.querySelectorAll('pre').forEach((pre) => {
+      const button = document.createElement('button');
+      button.className = 'copy-btn';
+      button.textContent = 'Copy';
+
+      button.addEventListener('click', () => {
+        const clone = pre.cloneNode(true);
+        clone.querySelector('.copy-btn').remove();
+        
+        // Preserves exact tabs and indentation while trimming empty outer lines
+        const code = clone.textContent.replace(/^\n+|\n+$/g, '');
+        
+        navigator.clipboard.writeText(code).then(() => {
+          button.textContent = 'Copied!';
+          setTimeout(() => (button.textContent = 'Copy'), 2000);
+        });
+      });
+
+      pre.appendChild(button);
+    });
+  </script>
+
+</body>
+</html>
