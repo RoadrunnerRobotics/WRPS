@@ -1,1 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Prevents search engines like Google from indexing this page -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Roadrunner Robotics: Code for Experienced Users</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      color: #222;
+    }
+    h1, h2 {
+      color: #111;
+    }
+    pre {
+      position: relative;
+      background: #f4f4f4;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-x: auto;
+      tab-size: 4;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 14px;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .copy-btn:hover {
+      background: #e9e9e9;
+    }
+  </style>
+</head>
+<body>
 
+<h1 style="color: purple;">Roadrunner Robotics: Code Lessons</h1>
+  
+<!---------------------------------------------------------------------->
+<table>
+<td><h2>All programs need these lines at the very beginning:</h2><tr>
+<td><pre>
+from botcore import *
+from time import sleep
+from dpHelperCode import *  
+</pre><tr>
+
+
+<!---------------------------------------------------------------------->
+<td><h3>5. Keep making improvements! Oct 15, 2026</h3><tr>
+<td>Are you working on getting the robot from the start to the trophy? Keep working on that! There are many ways to do it. If you need help with your code or help with ideas, just ask! In particular, if you're using line following, have you tried improving that? One way to do that is to check the bottom sensor on the far left and the far right. For example, if only the far left sensor is on the line, maybe you need a stronger turn to the right!<tr>
+<td>onLine[LS_FAR_LEFT] gives you True or False from the leftmost sensor under the front of the robot<tr>
+<td>onLine[LS_FAR_RIGHT] gives you True or False from the rightmost sensor under the front of the robot<tr>
+
+
+<!---------------------------------------------------------------------->
+<td><h3>4. Tuning your speed! Oct 6, 2026 </h3><tr>
+<td>You may have noticed at the end of our loop we have used sleep to keep the motors going for 0.050 seconds and then sleep again to keep them off for the same duration. I did this to keep the robot's speed low so it could stay on the line relatively easily. You can probably reduce the time the motors are off and increase the robot speed by including the leftmost and rightmost bottom sensors in your code to track a line. So far we've only been using the middle three sensors (there are five sensors total). To make it work, you'd be finding a balance between speed and the complexity of your line following code!<tr>
+<td>onLine[LS_FAR_LEFT] gives you True or False from the leftmost sensor under the front of the robot<tr>
+<td>onLine[LS_FAR_RIGHT] gives you True or False from the rightmost sensor under the front of the robot<tr>  
+
+
+<!---------------------------------------------------------------------->
+<td><h3>3. Stop if you lose the line! Oct 1, 2026 (updated Oct 5 to fix an error!)</h3><tr>
+<td>If you lose the line you're following, the simplest response is to just stop. Let's try that by measuring and testing the time since we were last on the line!<tr>
+  
+  
+<td><pre>
+from botcore import *
+from dpHelperCode import *
+
+motors.enable(True)
+
+keepGoing=True
+lastMS=ticks_ms() #time loop started in milliseconds
+while keepGoing:
+    
+    # Read the bottom line sensors
+    onLine=lineSensors()
+    
+    if onLine[LS_MID_LEFT] and not onLine[LS_MID_RIGHT]:
+        #right of center
+        motors.run(LEFT,LOW_SPEED)  #default 30
+        motors.run(RIGHT,HIGH_SPEED)    #default 50
+        lastMS=ticks_ms() #update last time still on line
+    elif onLine[LS_MID_RIGHT] and not onLine[LS_MID_LEFT]:
+        #left of center
+        motors.run(LEFT,HIGH_SPEED)
+        motors.run(RIGHT,LOW_SPEED)
+        lastMS=ticks_ms() #update last time still on line
+    elif not any(onLine):
+        print('Now off line; check for how long')
+        thisMS=ticks_ms()   #current time
+        elapsedTime=thisMS-lastMS   #duration off the line in milliseconds
+        if elapsedTime>1000:     #stop after 1000 milliseconds
+            motors.run(LEFT,0) 
+            motors.run(RIGHT,0)
+    else:	#keep going forward!
+            motors.run(LEFT,BASE_SPEED) #default 40
+            motors.run(RIGHT,BASE_SPEED)
+            
+    sleep(0.050)  # Keep the motors doing what they were doing for 50 milliseconds
+    
+    # Cut the power completely to let the robot coast and slow down.
+    motors.run(LEFT,0)
+    motors.run(RIGHT,0)
+    sleep(0.050)  # Keep the motors OFF for 50 milliseconds
+    
+    #keep using any code you had here about detecting the Trophy with the proximity sensors!
+
+</pre><tr>
+
+
+<!---------------------------------------------------------------------->
+<td><h3>2. Stop at the Trophy! Sept 24, 2026</h3><tr>
+<td>At the end of the line is the Trophy and your robot should stop there (today the trophy itself is missing, but it will arrive soon). Change your loop to stop when the proximity sensor detects the podium!<tr>
+
+<td><pre>
+from botcore import *
+from time import sleep
+
+motors.enable(True)
+#set a True or False variable to keep looping or to stop
+keepGoing=True
+while keepGoing:
+
+    #have your previous line following code here
+    
+    #check if either the left or right proximity sensor "sees" the podium
+    p=prox.detect(1,5) #power 1to8, sens 0 to 100; here I've set it low power, low sensitivity so we get close
+    leds.prox(p)	#turn on the headlight near each proximity sensor if the podium is close
+    if p[0]==True or p[1]==True: #if either proximity sensor is true
+        keepGoing=False		#set the loop to stop
+        
+motors.enable(False)    #disable motors
+</pre><tr>
+
+
+<!---------------------------------------------------------------------->
+<td><h3>1. Below is basic code to follow a line! Sept 17, 2026</h3><tr>
+<td>Default low speed is 30, default base speed is 40, and default high speed is 50. If you want to change those, just redefine those variable names with new numbers. For example this would be faster, but more likely to skip off the line: </h3><tr>
+<td>LOW_SPEED=50<tr>
+<td>HIGH_SPEED=70<tr>
+
+<td><pre>
+#I've added many comments below to explain the lines of code. These are for humans to read, but would be ignored by Python.
+
+
+motors.enable(True)
+
+while True:	#keep looping!
+    
+    # Read the bottom line sensors and apply power for a fraction of a second.
+    
+    # The function lineSensors determines if the five line sensors are each on a line (return True) or not (return False). 
+    # The variable "onLine" has 5 entries: 0 is the leftmost line sensor at the front, 1 is just left of center,
+    # 2 is the center line sensor, 3 is just right of center, 4 is the rightmost line sensor
+    # I've assigned these numbers to the variables LS_FAR_LEFT, LS_MID_LEFT, LS_CENTER, LS_MID_RIGHT, LS_FAR_RIGHT
+    # The values in the variable "onLine" are True if the sensor is on a line and False otherwise
+    onLine=lineSensors()
+    
+    if onLine[LS_MID_LEFT] and not onLine[LS_MID_RIGHT]:
+        #read the above test as "if LS_MID_LEFT is True and LS_MID_RIGHT is False"
+        #bot is right of center so turn left a bit
+        motors.run(LEFT,LOW_SPEED)   
+        motors.run(RIGHT,HIGH_SPEED) 
+    elif onLine[LS_MID_RIGHT] and not onLine[LS_MID_LEFT]:
+        #read the above test as "if LS_MID_RIGHT is True and LS_MID_LEFT is False"
+        #bot is left of center so turn right a bit
+        motors.run(LEFT,HIGH_SPEED)
+        motors.run(RIGHT,LOW_SPEED)
+    else:
+        #Neither condition above was True so keep going straight!
+        print('Just keep going straight')
+        motors.run(LEFT,BASE_SPEED)
+        motors.run(RIGHT,BASE_SPEED)
+            
+    sleep(0.050)  # Keep the motors ON for 50 milliseconds using the speeds set above that depended on the line sensors
+    
+    # Cut the power completely to let the robot coast and slow down.
+    # This allows us to keep the robot motions very slow and helps stay on the line!
+    motors.run(LEFT,0)
+    motors.run(RIGHT,0)
+    sleep(0.05)  # Keep the motors OFF for 50 milliseconds
+
+</pre></tr>
+
+  
+</table>
+
+
+
+  
+<p><a href="index.html">&larr; Back to Roadrunner Robotics Home</a></p>
+	
+<!-- Script for copy code button is below -->  
+  <script>
+    document.querySelectorAll('pre').forEach((pre) => {
+      const button = document.createElement('button');
+      button.className = 'copy-btn';
+      button.textContent = 'Copy';
+
+      button.addEventListener('click', () => {
+        const clone = pre.cloneNode(true);
+        clone.querySelector('.copy-btn').remove();
+        
+        // Preserves exact tabs and indentation while trimming empty outer lines
+        const code = clone.textContent.replace(/^\n+|\n+$/g, '');
+        
+        navigator.clipboard.writeText(code).then(() => {
+          button.textContent = 'Copied!';
+          setTimeout(() => (button.textContent = 'Copy'), 2000);
+        });
+      });
+
+      pre.appendChild(button);
+    });
+  </script>
+
+</body>
+</html>
