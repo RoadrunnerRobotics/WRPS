@@ -1,1 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Prevents search engines like Google from indexing this page -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Roadrunner Robotics: Basic Starting Code</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      color: #222;
+    }
+    h1, h2 {
+      color: #111;
+    }
+    pre {
+      position: relative;
+      background: #f4f4f4;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-x: auto;
+      tab-size: 4;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 14px;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .copy-btn:hover {
+      background: #e9e9e9;
+    }
+  </style>
+</head>
+<body>
 
+<h1 style="color: purple;">Roadrunner Robotics: Basic Starting Code</h1>
+<h2>Copy and paste lines of Python code into your programs.<br> Text that follows the # symbol are English comments to explain things to us humans!  :)</h2>
+  
+<!---------------------------------------------------------------------->
+<table>
+<td><h2>All programs need these lines at the very beginning:</h2><tr>
+<td><pre>
+from botcore import *
+from time import sleep
+</pre><tr>
+
+
+<!---------------------------------------------------------------------->
+<td><h3>5. Do you want to stop if you hit a wall? Oct 15, 2026</h3><tr>
+<td>If you're still working on driving your robot around, please continue and ask for help when you need it! If you'd like to add code that stops the robot before hitting a wall (or at least after your sleep ends), we use the two front facing "proximity sensors". They are like headlights. Add the code below at the top of your loop. If your robot stops, you can restart your program on the robot with the "REBOOT" button when you need to. Note: The code to check for walls does so between sleeps! That's not ideal, but its simple for now.  :)<tr>
+  
+
+<td><pre>
+#detect barrier
+    p=prox.detect(1,5) #power 1to8, sens 0 to 100; default 1,100 if no parameter given
+    leds.prox(p) #turn on headlamps to show detection
+    if p[0]==True or p[1]==True: #wall detected!
+        motors.enable(False)    #stop motors
+</pre><tr>
+
+
+<!---------------------------------------------------------------------->
+<td><h3>4. Adding basic music! Oct 6, 2026</h3><tr>
+<td>We can add music with just a few lines of extra code! It is very basic and plays one note for each movement. The "song" variable below lists the notes you want to play. 0 is middle C (doe), 1 is D (ray), 2 is E (me), etc.<tr>
+  
+<td><pre>
+from botcore import *
+from time import sleep
+
+#Music Notes in Hertz from middle C
+#List entry 0 (the first number, 262 Hz) is middle C, entry 7 (523 Hz) is the C above middle C, entry 14 (1047 Hz) is two C's above middle C.
+notesHz=[262, 294, 330, 349, 392, 440, 494, 523, 587, 659, 698, 784, 880, 988, 1047, 1175, 1319]
+song=[0, 4, 7, 4]   #include as many notes as there are moves!
+
+m=['F', 'R', 'L', 'F'] #Forward, Left, Right
+t=[2, 3, 3, 2]	#how many seconds to travel
+numMove=len(m)
+
+BASE_SPEED=40	#motor speed can be between 30 and 100, or -30 and -100, or 0 to stop
+TURN_SLOWTIRE=30
+TURN_FASTTIRE=50
+motors.enable(True)
+
+ii=0
+while ii&lt;numMove:
+
+    spkr.pitch( notesHz[ song[ii] ] )   #play a note
+
+    thisMove=m[ii]
+    thist=t[ii]
+
+    if thisMove=='F':    #go forward
+        motors.run(LEFT, BASE_SPEED)
+        motors.run(RIGHT, BASE_SPEED)
+    elif thisMove=='L': #turn left
+        motors.run(LEFT, TURN_SLOWTIRE)
+        motors.run(RIGHT, TURN_FASTTIRE)
+    elif thisMove=='R': #turn right
+        motors.run(LEFT, TURN_FASTTIRE)
+        motors.run(RIGHT, TURN_SLOWTIRE)
+    else:   #stop
+        motors.run(LEFT, 0)
+        motors.run(RIGHT, 0)
+    
+    sleep(thist)
+
+    ii=ii+1
+    
+    
+motors.enable(False)
+spkr.off()	#turn off the speaker so the robot is quiet!
+</pre><tr>
+
+
+<!---------------------------------------------------------------------->
+<td><h3>3. Learn to Loop through motor commands! Oct 1, 2026</h3><tr>
+<td>We can use a loop to execute a set of movement commands. Within the loop, we use the if and else-if (written as elif) statements to check which movement is requested. Please note! Python use indentation to know what code lines are inside the loop, and what code lines are inside each condition within the if structure.<tr>
+    
+<td><pre>
+from botcore import *
+from time import sleep
+
+m=['F', 'L', 'R'] #Forward, Left, Right
+t=[2, 3, 1]	#how many seconds to travel
+numMove=len(m)
+
+BASE_SPEED=40	#motor speed can be between 30 and 100, or -30 and -100, or 0 to stop
+TURN_SLOWTIRE=30
+TURN_FASTTIRE=50
+motors.enable(True)
+
+ii=0
+while ii&lt;numMove:
+
+    thisMove=m[ii]
+    thist=t[ii]
+
+    if thisMove=='F':    #go forward
+        motors.run(LEFT, BASE_SPEED)
+        motors.run(RIGHT, BASE_SPEED)
+        sleep(thist)
+    elif thisMove=='L': #turn left
+        motors.run(LEFT, TURN_SLOWTIRE)
+        motors.run(RIGHT, TURN_FASTTIRE)
+        sleep(thist)
+    elif thisMove=='R': #turn right
+        motors.run(LEFT, TURN_FASTTIRE)
+        motors.run(RIGHT, TURN_SLOWTIRE)
+        sleep(thist)
+    else:   #stop
+        motors.run(LEFT, 0)
+        motors.run(RIGHT, 0)
+
+
+    ii=ii+1
+    
+motors.enable(False)
+</pre><tr>
+
+
+<!---------------------------------------------------------------------->
+<td><h3>2. Getting the robot to travel a preprogrammed path! Sept 24, 2026</h3><tr>
+<td>Try adding more lines using motors.run and sleep to make the robot get from the start of our arena to the goal at the end. This will involve some trial and error with how long to go straight and how long to turn! Your code might have three or more "go straight" sections with turns in between. For example:<tr>
+      
+<td><pre>
+from botcore import *
+from time import sleep
+  
+motors.enable(True)
+BASE_SPEED=40	#motor speed can be between 30 and 100, or -30 and -100, or 0 to stop
+TURN_SLOWTIRE=30
+TURN_FASTTIRE=50
+
+#straight section 1
+motors.run(LEFT,BASE_SPEED)
+motors.run(RIGHT,BASE_SPEED)
+sleep(4.5)
+
+#turn left
+motors.run(LEFT, TURN_SLOWTIRE)
+motors.run(RIGHT, TURN_FASTTIRE)
+sleep(3.25)
+
+#straight section 2
+motors.run(LEFT,BASE_SPEED)
+motors.run(RIGHT,BASE_SPEED)
+sleep(4.5)
+
+#add some more sections!
+
+</pre><tr>
+
+<!---------------------------------------------------------------------->
+<td><h3>1. Below is code to get the robot moving! Sept 17, 2026</h3><tr>
+
+      
+<td><pre>
+from botcore import *
+from time import sleep
+  
+motors.enable(True)
+BASE_SPEED=40	#motor speed can be between 30 and 100, or -30 and -100, or 0 to stop
+motors.run(LEFT,BASE_SPEED)
+motors.run(RIGHT,BASE_SPEED)
+
+#How do you keep the robot going before the program ends? 
+#Try 5 seconds of "sleep"; sleep actually means keep doing what you're doing!
+sleep(5)
+
+</pre><tr>
+
+
+
+<!---------------------------------------------------------------------->
+</table>  
+  
+<p><a href="index.html">&larr; Back to Roadrunner Robotics Home</a></p>
+	
+<!-- Script for copy code button is below -->  
+  <script>
+    document.querySelectorAll('pre').forEach((pre) => {
+      const button = document.createElement('button');
+      button.className = 'copy-btn';
+      button.textContent = 'Copy';
+
+      button.addEventListener('click', () => {
+        const clone = pre.cloneNode(true);
+        clone.querySelector('.copy-btn').remove();
+        
+        // Preserves exact tabs and indentation while trimming empty outer lines
+        const code = clone.textContent.replace(/^\n+|\n+$/g, '');
+        
+        navigator.clipboard.writeText(code).then(() => {
+          button.textContent = 'Copied!';
+          setTimeout(() => (button.textContent = 'Copy'), 2000);
+        });
+      });
+
+      pre.appendChild(button);
+    });
+  </script>
+
+</body>
+</html>
