@@ -66,10 +66,10 @@ from time import sleep
 
 <td><pre>
 #detect barrier
-    p=prox.detect(1,5) #power 1to8, sens 0 to 100; default 1,100 if no parameter given
-    leds.prox(p) #turn on headlamps to show detection
-    if p[0]==True or p[1]==True: #wall detected!
-        motors.enable(False)    #stop motors
+p=prox.detect(1,5) #power 1to8, sens 0 to 100; default 1,100 if no parameter given
+leds.prox(p) #turn on headlamps to show detection
+if p[0]==True or p[1]==True: #wall detected!
+    motors.enable(False)    #stop motors
 </pre><tr>
 
 
